@@ -1,7 +1,7 @@
 package eShelf;
 
 public class Book {
-    private int id; // Add this line
+    private int id; 
     private String name;
     private String author;
     private double price;
