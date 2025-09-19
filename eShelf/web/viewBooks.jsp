@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="eShelf.Book" %> <%-- This import now matches your package --%>
+<%@ page import="eShelf.Book" %> 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -21,7 +21,7 @@
         <th>Author</th>
         <th>Price</th>
         <th>Quantity</th>
-        <%-- Add Actions header only if user is Admin --%>
+        
         <% if ("Admin".equals(session.getAttribute("role"))) { %>
         <th>Actions</th>
         <% } else { %>
@@ -39,7 +39,7 @@
         <td>$<%= String.format("%.2f", book.getPrice()) %></td>
         <td><%= book.getQty() %></td>
 
-        <%-- This is the corrected if/else block --%>
+        
         <% if ("Admin".equals(session.getAttribute("role"))) { %>
         <td>
             <form action="deleteBook" method="post" style="margin:0;">
