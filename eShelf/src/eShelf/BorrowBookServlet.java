@@ -22,10 +22,6 @@ public class BorrowBookServlet extends HttpServlet {
         int userId = (int) session.getAttribute("userId");
         int bookId = Integer.parseInt(request.getParameter("bookId"));
 
-        // Business logic: Check if book is available and not already borrowed by user
-        // For simplicity, we will just perform the borrow action here.
-        // A full implementation would have checks here.
-
         String insertBorrowSql = "INSERT INTO borrowings (book_id, user_id, start_date, finish_date) VALUES (?, ?, ?, ?)";
         String updateBookSql = "UPDATE books SET brwcopies = brwcopies - 1 WHERE id = ?";
 
@@ -40,7 +36,7 @@ public class BorrowBookServlet extends HttpServlet {
                 insertStmt.setInt(1, bookId);
                 insertStmt.setInt(2, userId);
                 insertStmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-                insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(14))); // 14-day loan
+                insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(14))); 
                 insertStmt.executeUpdate();
 
                 // 2. Decrement the available borrowing copies
