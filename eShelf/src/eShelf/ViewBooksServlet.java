@@ -22,6 +22,7 @@ public class ViewBooksServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Book book = new Book();
+                book.setId(rs.getInt("id"));
                 book.setName(rs.getString("name"));
                 book.setAuthor(rs.getString("author"));
                 book.setPrice(rs.getDouble("price"));

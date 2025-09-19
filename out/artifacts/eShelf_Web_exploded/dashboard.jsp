@@ -74,7 +74,7 @@
         <%-- Check the user's role from the session --%>
         <% if ("Admin".equals(session.getAttribute("role"))) { %>
 
-        <div class="menu-item"><a href="#">Add New Book</a></div>
+        <div class="menu-item"><a href="addBook.jsp">Add New Book</a></div>
         <div class="menu-item"><a href="#">Delete a Book</a></div>
         <div class="menu-item"><a href="#">View Orders</a></div>
 

@@ -31,6 +31,7 @@ public class LoginServlet extends HttpServlet {
 
             if (rs.next()) {
                 // User found, login successful
+                int userId = rs.getInt("id");
                 String name = rs.getString("name");
                 String role = rs.getString("role");
 
@@ -38,6 +39,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
 
                 // Store user's name and role in the session
+                session.setAttribute("userId", userId);
                 session.setAttribute("username", name);
                 session.setAttribute("role", role);
 
