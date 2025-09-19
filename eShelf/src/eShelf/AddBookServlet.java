@@ -20,8 +20,6 @@ public class AddBookServlet extends HttpServlet {
         int qty = Integer.parseInt(request.getParameter("qty"));
         int brwcopies = Integer.parseInt(request.getParameter("brwcopies"));
 
-        // For now, we'll leave publisher and address as null or default
-
         String sql = "INSERT INTO books (name, author, price, qty, brwcopies) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -36,11 +34,9 @@ public class AddBookServlet extends HttpServlet {
             stmt.executeUpdate();
 
         } catch (Exception e) {
-            // For a real application, you'd want to handle this error more gracefully
+            
             throw new ServletException("Database error adding book", e);
         }
-
-        // After adding the book, redirect to the book list to see the new entry
         response.sendRedirect("viewBooks");
     }
 }
