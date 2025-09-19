@@ -1,4 +1,4 @@
-package eShelf; // Make sure this package name is correct
+package eShelf; 
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
