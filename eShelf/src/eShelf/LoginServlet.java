@@ -11,9 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.servlet.http.HttpSession;
 
-// This annotation turns the class into a servlet and maps it to the "/login" URL
+
 @WebServlet("/login")
-// This makes the class a servlet by inheriting from HttpServlet
+
 public class LoginServlet extends HttpServlet {
 
     @Override
