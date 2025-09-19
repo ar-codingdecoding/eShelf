@@ -1,6 +1,6 @@
 # eShelf - Library Management System
 
-A web-based application for managing a library's book catalog, users, and borrowing system. This project is a conversion of an original Java Swing desktop application to a modern web application using Java Servlets and JSP.
+A web-based application for managing a library's book catalog, users, and borrowing system. This project is a modern web application using Java Servlets and JSP.
 
 ---
 
