@@ -75,7 +75,7 @@ CREATE TABLE users (
 
 -- Note: You should manually insert a dummy Administrator so you have an initial login!
 INSERT INTO users (name, email, phonenumber, password, role) 
-VALUES ('Super Admin', 'admin@example.com', '555-0199', 'admin123', 'Admin');
+VALUES ('Super Admin', 'admin@example.com', '123456789', 'abcdefgh', 'Admin');
 
 -- Create the general books ledger
 CREATE TABLE books (
