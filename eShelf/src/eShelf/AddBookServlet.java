@@ -12,7 +12,8 @@ import java.sql.PreparedStatement;
 @WebServlet("/addBook")
 public class AddBookServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         // Retrieve form parameters
         String name = request.getParameter("name");
         String author = request.getParameter("author");
@@ -20,12 +21,10 @@ public class AddBookServlet extends HttpServlet {
         int qty = Integer.parseInt(request.getParameter("qty"));
         int brwcopies = Integer.parseInt(request.getParameter("brwcopies"));
 
-
-
         String sql = "INSERT INTO books (name, author, price, qty, brwcopies) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name);
             stmt.setString(2, author);
@@ -39,7 +38,6 @@ public class AddBookServlet extends HttpServlet {
 
             throw new ServletException("Database error adding book", e);
         }
-
 
         response.sendRedirect("viewBooks");
     }

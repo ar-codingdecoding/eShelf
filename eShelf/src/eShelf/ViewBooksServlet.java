@@ -14,7 +14,8 @@ import java.util.List;
 
 @WebServlet("/viewBooks")
 public class ViewBooksServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         List<Book> bookList = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT * FROM books";

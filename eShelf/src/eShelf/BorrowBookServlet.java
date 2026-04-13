@@ -15,14 +15,12 @@ import java.time.LocalDate;
 @WebServlet("/borrowBook")
 public class BorrowBookServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
-
 
         int userId = (int) session.getAttribute("userId");
         int bookId = Integer.parseInt(request.getParameter("bookId"));
-
-
 
         String insertBorrowSql = "INSERT INTO borrowings (book_id, user_id, start_date, finish_date) VALUES (?, ?, ?, ?)";
         String updateBookSql = "UPDATE books SET brwcopies = brwcopies - 1 WHERE id = ?";
@@ -32,13 +30,13 @@ public class BorrowBookServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             try (PreparedStatement insertStmt = conn.prepareStatement(insertBorrowSql);
-                 PreparedStatement updateStmt = conn.prepareStatement(updateBookSql)) {
+                    PreparedStatement updateStmt = conn.prepareStatement(updateBookSql)) {
 
                 // 1. Insert into borrowings table
                 insertStmt.setInt(1, bookId);
                 insertStmt.setInt(2, userId);
                 insertStmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-                insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(14))); // 14-day loan
+                insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(14)));
                 insertStmt.executeUpdate();
 
                 // 2. Decrement the available borrowing copies
