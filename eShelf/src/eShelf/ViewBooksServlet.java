@@ -1,4 +1,4 @@
-package eShelf; // This package name is now correct
+package eShelf;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,6 +27,7 @@ public class ViewBooksServlet extends HttpServlet {
                 book.setAuthor(rs.getString("author"));
                 book.setPrice(rs.getDouble("price"));
                 book.setQty(rs.getInt("qty"));
+                book.setBrwcopies(rs.getInt("brwcopies"));
                 bookList.add(book);
             }
         } catch (Exception e) {

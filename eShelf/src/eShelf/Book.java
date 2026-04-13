@@ -6,6 +6,7 @@ public class Book {
     private String author;
     private double price;
     private int qty;
+    private int brwcopies;
 
     public int getId() {
         return id;
@@ -23,4 +24,6 @@ public class Book {
     public void setPrice(double price) { this.price = price; }
     public int getQty() { return qty; }
     public void setQty(int qty) { this.qty = qty; }
+    public int getBrwcopies() { return brwcopies; }
+    public void setBrwcopies(int brwcopies) { this.brwcopies = brwcopies; }
 }

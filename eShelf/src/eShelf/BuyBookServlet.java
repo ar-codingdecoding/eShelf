@@ -10,55 +10,53 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.time.LocalDate;
 
-@WebServlet("/borrowBook")
-public class BorrowBookServlet extends HttpServlet {
+@WebServlet("/buyBook")
+public class BuyBookServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-
-
         int userId = (int) session.getAttribute("userId");
         int bookId = Integer.parseInt(request.getParameter("bookId"));
 
-
-
-        String insertBorrowSql = "INSERT INTO borrowings (book_id, user_id, start_date, finish_date) VALUES (?, ?, ?, ?)";
-        String updateBookSql = "UPDATE books SET brwcopies = brwcopies - 1 WHERE id = ?";
+        String getBookPriceSql = "SELECT price FROM books WHERE id = ?";
+        String insertOrderSql = "INSERT INTO orders (book_id, user_id, price, qty) VALUES (?, ?, ?, 1)";
+        String updateBookSql = "UPDATE books SET qty = qty - 1 WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            // Start a transaction
             conn.setAutoCommit(false);
-
-            try (PreparedStatement insertStmt = conn.prepareStatement(insertBorrowSql);
+            
+            try (PreparedStatement priceStmt = conn.prepareStatement(getBookPriceSql);
+                 PreparedStatement insertStmt = conn.prepareStatement(insertOrderSql);
                  PreparedStatement updateStmt = conn.prepareStatement(updateBookSql)) {
 
-                // 1. Insert into borrowings table
+                // Get current price of the book
+                priceStmt.setInt(1, bookId);
+                ResultSet rs = priceStmt.executeQuery();
+                double price = 0.0;
+                if (rs.next()) {
+                    price = rs.getDouble("price");
+                }
+
+                // Insert into orders table
                 insertStmt.setInt(1, bookId);
                 insertStmt.setInt(2, userId);
-                insertStmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-                insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(14))); // 14-day loan
+                insertStmt.setDouble(3, price);
                 insertStmt.executeUpdate();
 
-                // 2. Decrement the available borrowing copies
+                // Decrement the available physical inventory
                 updateStmt.setInt(1, bookId);
                 updateStmt.executeUpdate();
 
-                // If both commands succeed, commit the transaction
                 conn.commit();
-
             } catch (Exception e) {
-                // If anything fails, rollback the transaction
                 conn.rollback();
-                throw new ServletException("Error during borrowing process.", e);
+                throw new ServletException("Error during purchasing process.", e);
             }
-
         } catch (Exception e) {
-            throw new ServletException("Database error during borrowing process.", e);
+            throw new ServletException("Database error during purchasing process.", e);
         }
 
-        // Redirect back to the book list
         response.sendRedirect("viewBooks");
     }
 }

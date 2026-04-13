@@ -6,10 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eShelf | Book Catalog</title>
+    <title>eShelf | Search Catalog</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --primary: #4F46E5;
             --bg-color: #0F172A;
             --card-bg: #1E293B;
             --text-main: #F8FAFC;
@@ -24,18 +25,20 @@
         .back-link:hover { color: white; }
 
         .container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
-        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .header-section h1 { font-size: 32px; font-weight: 800; }
+        .header-section { text-align: center; margin-bottom: 40px; }
+        .header-section h1 { font-size: 32px; font-weight: 800; margin-bottom: 20px; }
         
-        table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .search-form { display: flex; max-width: 600px; margin: 0 auto; gap: 10px; }
+        .search-input { flex: 1; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.6); color: white; font-size: 16px; outline: none; transition: all 0.3s ease; }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+        .search-btn { background: var(--primary); color: white; border: none; padding: 0 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .search-btn:hover { background: #4338CA; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
         th, td { padding: 20px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
         th { background: rgba(15, 23, 42, 0.4); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
-        
-        .pill-badge { padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; }
-        .stock-good { background: rgba(16, 185, 129, 0.1); color: #34D399; }
-        .stock-low { background: rgba(245, 158, 11, 0.1); color: #FBBF24; }
         
         .actions { display: flex; gap: 10px; }
         .btn { border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
@@ -43,8 +46,6 @@
         .btn-borrow:hover { background: rgba(59, 130, 246, 0.2); }
         .btn-buy { background: rgba(16, 185, 129, 0.1); color: #34D399; }
         .btn-buy:hover { background: rgba(16, 185, 129, 0.2); }
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #F87171; }
-        .btn-delete:hover { background: rgba(239, 68, 68, 0.2); }
         
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     </style>
@@ -58,53 +59,50 @@
 
 <div class="container">
     <div class="header-section">
-        <h1>Literature Catalog</h1>
+        <h1>Discover Literature</h1>
+        <form class="search-form" action="searchBooks" method="get">
+            <input type="text" name="query" class="search-input" placeholder="Search by book title or author..." required>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
     </div>
 
+    <% if (request.getAttribute("searchResults") != null) { %>
     <table>
         <tr>
             <th>Title</th>
             <th>Author</th>
             <th>Price</th>
-            <th>Buy Qty</th>
-            <th>Borrow Qty</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         <%
-            List<Book> bookList = (List<Book>) request.getAttribute("bookList");
+            List<Book> searchResults = (List<Book>) request.getAttribute("searchResults");
             boolean isAdmin = "Admin".equals(session.getAttribute("role"));
             
-            if (bookList != null && !bookList.isEmpty()) {
-                for (Book book : bookList) {
+            if (!searchResults.isEmpty()) {
+                for (Book book : searchResults) {
         %>
         <tr>
             <td style="font-weight: 600;"><%= book.getName() %></td>
             <td style="color: var(--text-muted);"><%= book.getAuthor() %></td>
             <td style="color: #34D399; font-weight: 500;">$<%= String.format("%.2f", book.getPrice()) %></td>
-            
-            <td><span class="pill-badge <%= book.getQty() > 5 ? "stock-good" : "stock-low" %>"><%= book.getQty() %> in stock</span></td>
-            <td><span class="pill-badge <%= book.getBrwcopies() > 0 ? "stock-good" : "stock-low" %>"><%= book.getBrwcopies() %> available</span></td>
-            
+            <td style="color: var(--text-muted); font-size: 14px;"><%= book.getBrwcopies() %> available to borrow <br> <%= book.getQty() %> available to buy</td>
             <td class="actions">
-                <% if (isAdmin) { %>
-                <form action="deleteBook" method="post" style="margin:0;">
-                    <input type="hidden" name="bookId" value="<%= book.getId() %>">
-                    <button type="submit" class="btn btn-delete">Remove</button>
-                </form>
-                <% } else { %>
+                <% if (!isAdmin) { %>
                     <% if (book.getBrwcopies() > 0) { %>
                     <form action="borrowBook" method="post" style="margin:0;">
                         <input type="hidden" name="bookId" value="<%= book.getId() %>">
                         <button type="submit" class="btn btn-borrow">Borrow</button>
                     </form>
                     <% } %>
-                    
                     <% if (book.getQty() > 0) { %>
                     <form action="buyBook" method="post" style="margin:0;">
                         <input type="hidden" name="bookId" value="<%= book.getId() %>">
-                        <button type="submit" class="btn btn-buy">Purchase</button>
+                        <button type="submit" class="btn btn-buy">Buy</button>
                     </form>
                     <% } %>
+                <% } else { %>
+                    <span style="color: var(--text-muted); font-size: 13px;">Manage in Catalog</span>
                 <% } %>
             </td>
         </tr>
@@ -113,16 +111,17 @@
             } else {
         %>
         <tr>
-            <td colspan="6" class="empty-state">
-                <div style="font-size: 48px; margin-bottom: 20px;">📚</div>
-                <h3>No books found</h3>
-                <p style="margin-top: 10px;">The library catalog is currently empty.</p>
+            <td colspan="5" class="empty-state">
+                <div style="font-size: 32px; margin-bottom: 20px;">🔍</div>
+                <h3>No exact matches found</h3>
+                <p>Try searching with different keywords.</p>
             </td>
         </tr>
         <%
             }
         %>
     </table>
+    <% } %>
 </div>
 
 </body>

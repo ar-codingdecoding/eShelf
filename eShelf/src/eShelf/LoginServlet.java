@@ -11,21 +11,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.servlet.http.HttpSession;
 
-// This annotation turns the class into a servlet and maps it to the "/login" URL
+
 @WebServlet("/login")
-// This makes the class a servlet by inheriting from HttpServlet
+
 public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-        String phonenumber = request.getParameter("phonenumber");
+        String password = request.getParameter("password");
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM users WHERE email = ? AND phonenumber = ?";
+            String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email);
-            stmt.setString(2, phonenumber);
+            stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
 
